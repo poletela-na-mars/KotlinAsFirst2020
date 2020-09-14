@@ -119,6 +119,7 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
     ((hoursArrive - hoursDepart) * 60 + (minutesArrive - minutesDepart))
 
 
+
 /**
  * Простая (2 балла)
  *
