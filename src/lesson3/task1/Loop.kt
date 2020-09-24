@@ -2,7 +2,9 @@
 
 package lesson3.task1
 
+import kotlin.math.min
 import kotlin.math.sqrt
+import kotlin.math.*
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -72,7 +74,15 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun digitNumber(n: Int): Int = TODO()
+fun digitNumber(n: Int): Int {
+    var count = 0
+    var number = n
+    do {
+        if (number % 10 >= 0) count++
+        number /= 10
+    } while (number > 0)
+    return count
+}
 
 /**
  * Простая (2 балла)
@@ -80,7 +90,12 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    return if (n == 1 || n == 2) 1
+    else {
+        fib(n - 1) + fib(n - 2)
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -120,7 +135,18 @@ fun collatzSteps(x: Int): Int = TODO()
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int = TODO()
+fun nod(m: Int, n: Int): Int {
+    var x = n
+    var y = m
+    while (x != y) {
+        if (x > y) x -= y
+        else y -= x
+    }
+    return x
+}
+
+fun lcm(m: Int, n: Int): Int =// будем искать НОК с помощью НОД
+    (m * n / nod(m, n))
 
 /**
  * Средняя (3 балла)
@@ -147,7 +173,17 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var result = 0
+    var m: Int
+    var number = n
+    while (number > 0) {
+        m = number % 10
+        number /= 10
+        result = result * 10 + m
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -179,7 +215,23 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sqr(x: Double) = x * x
+
+fun sin(x: Double, eps: Double): Double {
+    val i = 1
+    var sign = 0
+    var factorial = 2 + i
+    val e = x % (2 * PI)
+    var xPI = e
+    var p = e.pow(2 + i) / ((factorial - 1) * factorial)
+    while (abs(p) >= eps) {
+        factorial += 2
+        if (sign % 2 == 0) xPI -= p else xPI += p
+        p *= sqr(e) / ((factorial - 1) * factorial)
+        sign++
+    }
+    return xPI
+}
 
 /**
  * Средняя (4 балла)
@@ -190,7 +242,21 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    val i = 0
+    var sign = 0
+    var factorial = 2 + i
+    val e = x % (2 * PI)
+    var xPI = 1.0
+    var p = e.pow(2 + i) / ((factorial - 1) * factorial)
+    while (abs(p) >= eps) {
+        factorial += 2
+        if (sign % 2 == 0) xPI -= p else xPI += p
+        p *= sqr(e) / ((factorial - 1) * factorial)
+        sign++
+    }
+    return xPI
+}
 
 /**
  * Сложная (4 балла)
