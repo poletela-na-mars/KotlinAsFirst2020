@@ -2,7 +2,6 @@
 
 package lesson3.task1
 
-import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.math.*
 
@@ -78,9 +77,9 @@ fun digitNumber(n: Int): Int {
     var count = 0
     var number = n
     do {
-        if (number % 10 >= 0) count++
+        count++
         number /= 10
-    } while (number > 0)
+    } while (number != 0)
     return count
 }
 
@@ -91,10 +90,18 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-    return if (n == 1 || n == 2) 1
-    else {
-        fib(n - 1) + fib(n - 2)
+    var f1 = 1
+    var f2 = 1
+    for (i in 1..n) {
+        if (i < 3) {
+            f1 = 1
+            f2 = 1
+        } else {
+            f1 += f2
+            f2 = f1 - f2
+        }
     }
+    return f1
 }
 
 /**
