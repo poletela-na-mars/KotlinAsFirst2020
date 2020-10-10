@@ -4,11 +4,14 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
+import kotlin.math.*
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
 // Рекомендуемое количество баллов = 8
 // Вместе с предыдущими уроками = 24/33
+
+fun sqr(x: Double) = x * x
 
 /**
  * Пример
@@ -120,14 +123,28 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = TODO()
+fun abs(v: List<Double>): Double {
+    var result = 0.0
+    for (i in v.indices) {
+        val element = v[i]
+        result += sqr(element)
+    }
+    return abs(sqrt(result))
+}
 
 /**
  * Простая (2 балла)
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
+fun mean(list: List<Double>): Double {
+    var result = 0.0
+    val sum = list.sum()
+    val checkEmpty = list.isEmpty()
+    if (checkEmpty) return result
+    result = sum / list.size
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -186,7 +203,23 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String {
+    var number = n
+    var count = 0
+    //var result: String = n.toString()
+    var result = ""
+    for (i in 2..number) {
+        while (number != 1 && number % i == 0) {
+            number /= i
+            count++
+            if (count > 1) {
+                result += "*"
+            }
+            result += "$i"
+        }
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -217,7 +250,16 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var result = 0.0
+    val b: Double = base.toDouble()
+    var size = digits.size
+    for (element in digits) {
+        result += element * b.pow(size - 1)
+        size--
+    }
+    return result.toInt()
+}
 
 /**
  * Сложная (4 балла)
@@ -241,7 +283,28 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+
+fun roman(n: Int): String {
+    var units = 0
+    var decades = 0
+    var hundreds = 0
+    var thousands = 0
+    var result = ""
+
+    units = n % 10
+    decades = n % 100 / 10
+    hundreds = n % 1000 / 100
+    thousands = n / 1000
+
+    val listThousands: List<String> = listOf<String>("", "M", "MM", "MMM")
+    val listHundreds: List<String> = listOf<String>("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM")
+    val listDecades: List<String> = listOf<String>("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC")
+    val listUnits: List<String> = listOf<String>("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX")
+
+    result = listThousands[thousands] + listHundreds[hundreds] + listDecades[decades] + listUnits[units]
+
+    return result
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -250,4 +313,5 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
+
 fun russian(n: Int): String = TODO()
