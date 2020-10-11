@@ -125,8 +125,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  */
 fun abs(v: List<Double>): Double {
     var result = 0.0
-    for (i in v.indices) {
-        val element = v[i]
+    for (element in v) {
         result += sqr(element)
     }
     return abs(sqrt(result))
@@ -139,9 +138,8 @@ fun abs(v: List<Double>): Double {
  */
 fun mean(list: List<Double>): Double {
     var result = 0.0
+    if (list.isEmpty()) return result
     val sum = list.sum()
-    val checkEmpty = list.isEmpty()
-    if (checkEmpty) return result
     result = sum / list.size
     return result
 }
@@ -194,7 +192,17 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    var number = n
+    val result = mutableListOf<Int>()
+    for (i in 2..number) {
+        while (number != 1 && number % i == 0) {
+            number /= i
+            result.add(i)
+        }
+    }
+    return result
+}
 
 /**
  * Сложная (4 балла)
@@ -203,23 +211,8 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String {
-    var number = n
-    var count = 0
-    //var result: String = n.toString()
-    var result = ""
-    for (i in 2..number) {
-        while (number != 1 && number % i == 0) {
-            number /= i
-            count++
-            if (count > 1) {
-                result += "*"
-            }
-            result += "$i"
-        }
-    }
-    return result
-}
+fun factorizeToString(n: Int): String =
+    factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя (3 балла)
@@ -257,6 +250,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
     for (element in digits) {
         result += element * b.pow(size - 1)
         size--
+        result.toInt()
     }
     return result.toInt()
 }
@@ -285,25 +279,17 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  */
 
 fun roman(n: Int): String {
-    var units = 0
-    var decades = 0
-    var hundreds = 0
-    var thousands = 0
-    var result = ""
+    val units = n % 10
+    val decades = n % 100 / 10
+    val hundreds = n % 1000 / 100
+    val thousands = n / 1000
 
-    units = n % 10
-    decades = n % 100 / 10
-    hundreds = n % 1000 / 100
-    thousands = n / 1000
+    val listThousands: List<String> = listOf("", "M", "MM", "MMM")
+    val listHundreds: List<String> = listOf("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM")
+    val listDecades: List<String> = listOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC")
+    val listUnits: List<String> = listOf("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX")
 
-    val listThousands: List<String> = listOf<String>("", "M", "MM", "MMM")
-    val listHundreds: List<String> = listOf<String>("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM")
-    val listDecades: List<String> = listOf<String>("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC")
-    val listUnits: List<String> = listOf<String>("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX")
-
-    result = listThousands[thousands] + listHundreds[hundreds] + listDecades[decades] + listUnits[units]
-
-    return result
+    return listThousands[thousands] + listHundreds[hundreds] + listDecades[decades] + listUnits[units]
 }
 
 /**
