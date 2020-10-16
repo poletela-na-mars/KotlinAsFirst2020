@@ -137,11 +137,9 @@ fun abs(v: List<Double>): Double {
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
 fun mean(list: List<Double>): Double {
-    var result = 0.0
-    if (list.isEmpty()) return result
+    if (list.isEmpty()) return 0.0
     val sum = list.sum()
-    result = sum / list.size
-    return result
+    return sum / list.size
 }
 
 /**
@@ -195,7 +193,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
 fun factorize(n: Int): List<Int> {
     var number = n
     val result = mutableListOf<Int>()
-    for (i in 2..number) {
+    for (i in 2..(sqrt(n.toDouble()) + 1).toInt()) {
         while (number != 1 && number % i == 0) {
             number /= i
             result.add(i)
@@ -244,15 +242,14 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
 fun decimal(digits: List<Int>, base: Int): Int {
-    var result = 0.0
+    var result = 0
     val b: Double = base.toDouble()
     var size = digits.size
     for (element in digits) {
-        result += element * b.pow(size - 1)
+        result += element * b.pow(size - 1).toInt()
         size--
-        result.toInt()
     }
-    return result.toInt()
+    return result
 }
 
 /**
