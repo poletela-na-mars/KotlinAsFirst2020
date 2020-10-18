@@ -199,6 +199,7 @@ fun factorize(n: Int): List<Int> {
             result.add(i)
         }
     }
+    if (result.size == 0) result.add(n)
     return result
 }
 
