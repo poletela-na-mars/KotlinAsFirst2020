@@ -192,6 +192,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
  */
 fun factorize(n: Int): List<Int> {
     var number = n
+    var divisor = 1
     val result = mutableListOf<Int>()
     for (i in 2..(sqrt(n.toDouble()) + 1).toInt()) {
         while (number != 1 && number % i == 0) {
@@ -200,6 +201,10 @@ fun factorize(n: Int): List<Int> {
         }
     }
     if (result.size == 0) result.add(n)
+    for (k in 0 until result.size) {
+        divisor *= result[k]
+    }
+    if (n / divisor != 1) result.add(n / divisor)
     return result
 }
 
