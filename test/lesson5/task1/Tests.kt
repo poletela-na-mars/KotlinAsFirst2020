@@ -122,6 +122,7 @@ class Tests {
     @Tag("2")
     fun containsIn() {
         assertTrue(containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")))
+        assertTrue(containsIn(mapOf("" to ""), mapOf("" to "")))
         assertFalse(containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")))
     }
 
@@ -154,6 +155,10 @@ class Tests {
         assertEquals(
             emptyList<String>(),
             whoAreInBoth(listOf("Marat", "Mikhail"), listOf("Sveta", "Kirill"))
+        )
+        assertEquals(
+            listOf(""),
+            whoAreInBoth(listOf("", ""), listOf(""))
         )
     }
 

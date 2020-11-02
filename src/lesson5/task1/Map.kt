@@ -110,12 +110,10 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    var check = false
-    for ((keyB, valueB) in b) {
-        for ((keyA, valueA) in a)
-            if (valueA == valueB && keyA == keyB) check = true
+    for ((keyA, valueA) in a) {
+        if (b.containsKey(keyA) && b.containsValue(valueA)) return true
     }
-    return check
+    return false
 }
 
 /**
@@ -135,9 +133,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
     val namesToRemove = mutableListOf<String>()
     for ((keyA, valueA) in a) {
-        for ((keyB, valueB) in b) {
-            if (valueA == valueB && keyA == keyB) namesToRemove.add(keyA)
-        }
+        if (b.containsKey(keyA) && b.containsValue(valueA)) namesToRemove.add(keyA)
     }
     for (keyA in namesToRemove) {
         a.remove(keyA)
@@ -152,13 +148,13 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val repeatedNames = mutableListOf<String>()
+    val repeatedNames = mutableSetOf<String>()
     for (elementA in a) {
         for (elementB in b) {
             if (elementA == elementB) repeatedNames.add(elementA)
         }
     }
-    return repeatedNames
+    return repeatedNames.toList()
 }
 
 /**
@@ -234,18 +230,10 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val repetitions = mutableMapOf<String, Int>()
-    val result = mutableMapOf<String, Int>()
     for (element in list) {
-        if (element in repetitions) {
-            repetitions[element] = repetitions[element]!! + 1
-        } else repetitions[element] = 1
+        repetitions[element] = (repetitions[element] ?: 0) + 1
     }
-    for ((name, repeat) in repetitions) {
-        if (repeat > 1) {
-            result[name] = repeat
-        }
-    }
-    return result
+    return repetitions.filterValues { it > 1 }
 }
 
 /**
@@ -297,16 +285,32 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *        )
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val withoutFr = mutableSetOf<String>()
     val result = mutableMapOf<String, Set<String>>()
-    for ((name, fr) in friends) {
-        if (result[name] == null) result += name to fr
-        for (people in fr) {
-            val list = friends[people]
-            if (list != null) {
-                for (newPeople in list) {
-                    if (newPeople != name && newPeople !in result[name]!!) result[name] = result[name]!! + newPeople
+    result.putAll(friends)      //добавляем людей и их первоначальных знакомых
+    var flag: Boolean
+    for ((nameF, fr) in friends) {
+        val setFr1 = fr.toMutableSet()      //множество с именами знакомых
+        if (setFr1.size > 0) {
+            do {
+                flag = true
+                val setFr2 = setFr1.toSet()
+                for (i in setFr2) {                         //перебор имен знакомых
+                    if (result[i] != null) {
+                        for (name in result[i]!!)           //меняем направление проверки
+                            if (name !in setFr1 && name != nameF) {
+                                setFr1 += name
+                                flag = false
+                            }
+                    } else withoutFr += i
                 }
-            } else result += people to mutableSetOf()
+            } while (!flag)
+            result[nameF] = setFr1.toSet()
+        }
+    }
+    if (withoutFr.size > 0) {
+        for (element in withoutFr) {
+            result[element] = emptySet()
         }
     }
     return result
@@ -335,7 +339,10 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val nSize = list.size - 1
     for (i in 0 until nSize) {
         for (j in 1 until list.size) {
-            if (list[i] + list[j] == number && i != j) result = Pair(i, j)
+            if (list[i] + list[j] == number && i != j) {
+                result = Pair(i, j)
+                break
+            }
         }
     }
     return result
@@ -399,5 +406,3 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     getAns(n, capacity)
     return endSet
 }
-
-
