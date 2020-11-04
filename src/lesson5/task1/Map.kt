@@ -111,7 +111,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for ((keyA, valueA) in a) {
-        if (b.containsKey(keyA) && b.containsValue(valueA)) return true
+        if (valueA == b[keyA]) return true
     }
     return false
 }
@@ -131,12 +131,8 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
-    val namesToRemove = mutableListOf<String>()
-    for ((keyA, valueA) in a) {
-        if (b.containsKey(keyA) && b.containsValue(valueA)) namesToRemove.add(keyA)
-    }
-    for (keyA in namesToRemove) {
-        a.remove(keyA)
+    for ((keyB, valueB) in b) {
+        if (valueB == a[keyB]) a.remove(keyB, valueB)
     }
 }
 
@@ -335,17 +331,15 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  */
 
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    var result: Pair<Int, Int> = Pair(-1, -1)
-    val nSize = list.size - 1
-    for (i in 0 until nSize) {
-        for (j in 1 until list.size) {
-            if (list[i] + list[j] == number && i != j) {
-                result = Pair(i, j)
-                break
-            }
-        }
+    val map = mutableMapOf<Int, Int>()
+    for ((ind, n) in list.withIndex()) {
+        val safeMap = map[number - n] ?: -1
+        if (safeMap != -1) {
+            return if (ind < safeMap) Pair(ind, safeMap) //условие порядка возрастания
+            else Pair(safeMap, ind)
+        } else map[n] = ind
     }
-    return result
+    return Pair(-1, -1)
 }
 
 /**
@@ -394,15 +388,14 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     for ((name, weightAndPrice) in treasures) {
         answer += name
     }
-    fun getAns(k: Int, s: Int) {
-        if (storage[k][s] == 0) return
-        if (storage[k - 1][s] == storage[k][s])
+    fun getAns(k: Int, s: Int): Set<String> {
+        if (storage[k][s] == 0) return endSet
+        return if (storage[k][s] == storage[k - 1][s])
             getAns(k - 1, s)
         else {
-            getAns(k - 1, s - mass[k - 1])
             endSet.add(answer[k - 1])
+            getAns(k - 1, s - mass[k - 1])
         }
     }
-    getAns(n, capacity)
-    return endSet
+    return getAns(n, capacity)
 }
