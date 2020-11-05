@@ -111,9 +111,9 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for ((keyA, valueA) in a) {
-        if (valueA == b[keyA]) return true
+        if (valueA != b[keyA]) return false
     }
-    return false
+    return true
 }
 
 /**
@@ -132,7 +132,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
     for ((keyB, valueB) in b) {
-        if (valueB == a[keyB]) a.remove(keyB, valueB)
+        a.remove(keyB, valueB)
     }
 }
 
@@ -333,11 +333,14 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val map = mutableMapOf<Int, Int>()
     for ((ind, n) in list.withIndex()) {
+        map[n] = ind
         val safeMap = map[number - n] ?: -1
         if (safeMap != -1) {
-            return if (ind < safeMap) Pair(ind, safeMap) //условие порядка возрастания
-            else Pair(safeMap, ind)
-        } else map[n] = ind
+            if (ind != safeMap) {
+                return if (ind < safeMap) Pair(ind, safeMap) //условие порядка возрастания
+                else Pair(safeMap, ind)
+            }
+        }
     }
     return Pair(-1, -1)
 }
