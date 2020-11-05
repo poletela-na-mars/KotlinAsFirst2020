@@ -333,14 +333,13 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val map = mutableMapOf<Int, Int>()
     for ((ind, n) in list.withIndex()) {
-        map[n] = ind
         val safeMap = map[number - n] ?: -1
         if (safeMap != -1) {
-            if (ind != safeMap) {
+            if (map.containsKey(number - n)) {
                 return if (ind < safeMap) Pair(ind, safeMap) //условие порядка возрастания
                 else Pair(safeMap, ind)
             }
-        }
+        } else map[n] = ind
     }
     return Pair(-1, -1)
 }
@@ -368,10 +367,10 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  */
 
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val endSet = mutableSetOf<String>()
     val mass = mutableListOf<Int>()
     val cost = mutableListOf<Int>()
     val n: Int = treasures.size
-    val endSet = mutableSetOf<String>()
     for ((name, weightAndPrice) in treasures) {
         mass.add(weightAndPrice.first)
         cost.add(weightAndPrice.second)
@@ -397,7 +396,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             getAns(k - 1, s)
         else {
             endSet.add(answer[k - 1])
-            getAns(k - 1, s - mass[k - 1])
+            getAns(k - 1, s - treasures.getValue(answer[k - 1]).first)
         }
     }
     return getAns(n, capacity)
