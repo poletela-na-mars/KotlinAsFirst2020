@@ -390,14 +390,14 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     for ((name, weightAndPrice) in treasures) {
         answer += name
     }
-    fun getAns(k: Int, s: Int): Set<String> {
+    fun getAns(k: Int, s: Int, endSet: MutableSet<String>): Set<String> {
         if (storage[k][s] == 0) return endSet
         return if (storage[k][s] == storage[k - 1][s])
-            getAns(k - 1, s)
+            getAns(k - 1, s, endSet)
         else {
             endSet.add(answer[k - 1])
-            getAns(k - 1, s - treasures.getValue(answer[k - 1]).first)
+            getAns(k - 1, s - treasures.getValue(answer[k - 1]).first, endSet)
         }
     }
-    return getAns(n, capacity)
+    return getAns(n, capacity, endSet)
 }
