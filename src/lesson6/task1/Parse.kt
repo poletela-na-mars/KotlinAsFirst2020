@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import kotlin.math.max
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -138,7 +140,21 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+
+fun plusMinus(expression: String): Int {
+    var ch = "+"
+    var result = 0
+    val check = expression.replace(" ", "").matches(Regex("""((\d+)([-+]))*(\d+)"""))
+    if (!check) throw IllegalArgumentException()
+    val storage = Regex("""\s""").split(expression)
+    for ((i, element) in storage.withIndex()) {
+        if (i % 2 == 0) {
+            result += if (ch == "+") element.toInt()
+            else -element.toInt()
+        } else ch = element
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)
@@ -162,6 +178,7 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
+
 fun mostExpensive(description: String): String = TODO()
 
 /**
@@ -175,7 +192,27 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+
+fun fromRoman(roman: String): Int {
+    val check = roman.matches(Regex("""(M{0,3})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})"""))
+    if (!check) return -1
+    var result = 0
+    val romanToArab = mapOf(
+        'M' to 1000, 'D' to 500, 'C' to 100, 'L' to 50, 'X' to 10, 'V' to 5, 'I' to 1
+    )
+
+    val l = roman.length - 1
+    for (n in 0 until l) {
+        if (!romanToArab.contains(roman[n]) || !romanToArab.contains(roman[n + 1])) return -1
+        if (romanToArab.keys.indexOf(roman[n]) < romanToArab.keys.indexOf(roman[n + 1])) {
+            //ищем в ключах обращение к заданной цифре
+            result += romanToArab[roman[n]] ?: 0
+        } else result -= romanToArab[roman[n]] ?: 0
+    }
+    result += romanToArab[roman.last()] ?: 0
+
+    return result
+}
 
 /**
  * Очень сложная (7 баллов)
