@@ -195,7 +195,7 @@ fun mostExpensive(description: String): String = TODO()
 
 fun fromRoman(roman: String): Int {
     val check = roman.matches(Regex("""(M{0,3})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})"""))
-    if (!check) return -1
+    if (!check || roman.isEmpty()) return -1
     var result = 0
     val romanToArab = mapOf(
         'M' to 1000, 'D' to 500, 'C' to 100, 'L' to 50, 'X' to 10, 'V' to 5, 'I' to 1
@@ -204,10 +204,10 @@ fun fromRoman(roman: String): Int {
     val l = roman.length - 1
     for (n in 0 until l) {
         if (!romanToArab.contains(roman[n]) || !romanToArab.contains(roman[n + 1])) return -1
-        if (romanToArab.keys.indexOf(roman[n]) < romanToArab.keys.indexOf(roman[n + 1])) {
+        if (romanToArab.keys.indexOf(roman[n]) > romanToArab.keys.indexOf(roman[n + 1])) {
             //ищем в ключах обращение к заданной цифре
-            result += romanToArab[roman[n]] ?: 0
-        } else result -= romanToArab[roman[n]] ?: 0
+            result -= romanToArab[roman[n]] ?: 0
+        } else result += romanToArab[roman[n]] ?: 0
     }
     result += romanToArab[roman.last()] ?: 0
 
