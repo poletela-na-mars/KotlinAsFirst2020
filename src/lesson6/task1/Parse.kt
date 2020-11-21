@@ -204,10 +204,13 @@ fun fromRoman(roman: String): Int {
     val l = roman.length - 1
     for (n in 0 until l) {
         if (!romanToArab.contains(roman[n]) || !romanToArab.contains(roman[n + 1])) return -1
-        if (romanToArab.keys.indexOf(roman[n]) > romanToArab.keys.indexOf(roman[n + 1])) {
-            //ищем в ключах обращение к заданной цифре
-            result -= romanToArab[roman[n]] ?: 0
-        } else result += romanToArab[roman[n]] ?: 0
+        val romanN = romanToArab[roman[n]] ?: 0
+        val romanNext = romanToArab[roman[n + 1]] ?: 0
+        if (romanN < romanNext) {
+            result -= romanN
+        } else {
+            result += romanN
+        }
     }
     result += romanToArab[roman.last()] ?: 0
 

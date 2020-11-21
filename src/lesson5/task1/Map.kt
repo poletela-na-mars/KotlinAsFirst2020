@@ -336,8 +336,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
         if (map.containsKey(number - n)) {
             val safeMap = map[number - n] ?: -1
             if (safeMap != -1) {
-                return if (ind < safeMap) Pair(ind, safeMap) //условие порядка возрастания
-                else Pair(safeMap, ind)
+                return Pair(safeMap, ind)
             }
         } else map[n] = ind
     }

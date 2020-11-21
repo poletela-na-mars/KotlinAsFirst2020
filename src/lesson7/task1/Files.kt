@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.*
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -64,13 +65,10 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun deleteMarked(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
-    val deleteLine = mutableListOf<String>()
     for (line in File(inputName).readLines()) {
-        if (line.startsWith("_")) deleteLine.add(line)
-        if (!deleteLine.contains(line)) {
-            writer.write(line)
-            writer.newLine()
-        }
+        if (line.startsWith("_")) continue
+        writer.write(line)
+        writer.newLine()
     }
     writer.close()
 }
@@ -98,6 +96,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
                     var fl = 0
                     for ((n, i) in (symbol until symbol + string.length).withIndex()) {
                         if (it.toLowerCase()[i] != string.toLowerCase()[n]) fl = 1      //несовпадение
+                        continue
                     }
                     if (fl == 0) map[string] = map[string]!! + 1
                 }
@@ -174,8 +173,45 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    var maxL = 0
+    val reader = File(inputName).bufferedReader()
+    reader.forEachLine {
+        var x = 0
+        val words = it.trim().split(" ")
+        for (element in words) {
+            x += element.length
+        }
+        x += words.size - 1
+        if (x > maxL) maxL = x
+    }
+    reader.close()
+    val writer = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        var result = StringBuilder(line.trim())
+        val words = result.toString().split(" ")
+        if (words.size == 1) {
+            writer.write(words[0])
+            writer.newLine()
+            continue
+        }
+        result = StringBuilder(words.joinToString(separator = " "))
+        var spaceCount = 0   //Число пробелов
+        var l = words[0].length
+        val n = words.size - 1  //Число слов в строке
+        while (result.length != maxL) {
+            result.insert(l, " ") //Вставляет пробел в resLine, начиная с индекса length
+            spaceCount++
+            l += words[spaceCount % n].length + (spaceCount / n) + 2
+            if (spaceCount % n == 0) {
+                l = words[spaceCount % n].length
+            }
+        }
+        writer.write(result.toString())
+        writer.newLine()
+    }
+    writer.close()
 }
+
 
 /**
  * Средняя (14 баллов)
