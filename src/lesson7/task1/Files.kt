@@ -93,12 +93,8 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         for (string in substringsSet) {
             if (it.toLowerCase().contains(string.toLowerCase())) {
                 for (symbol in 0..it.length - string.length) {
-                    var fl = 0
-                    for ((n, i) in (symbol until symbol + string.length).withIndex()) {
-                        if (it.toLowerCase()[i] != string.toLowerCase()[n]) fl = 1      //несовпадение
-                        continue
-                    }
-                    if (fl == 0) map[string] = map[string]!! + 1
+                    if (it.substring(symbol, symbol + string.length).toLowerCase().contains(string.toLowerCase()))
+                        map[string] = map[string]!! + 1
                 }
             }
         }
@@ -177,7 +173,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val reader = File(inputName).bufferedReader()
     reader.forEachLine {
         var x = 0
-        val words = it.trim().split(" ")
+        val words = Regex("\\s+").split(it.trim())
         for (element in words) {
             x += element.length
         }
@@ -188,18 +184,18 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
         var result = StringBuilder(line.trim())
-        val words = result.toString().split(" ")
+        val words = Regex("\\s+").split(result.toString())
         if (words.size == 1) {
             writer.write(words[0])
             writer.newLine()
             continue
         }
         result = StringBuilder(words.joinToString(separator = " "))
-        var spaceCount = 0   //Число пробелов
+        var spaceCount = 0   //Число добавленных пробелов
         var l = words[0].length
-        val n = words.size - 1  //Число слов в строке
+        val n = words.size - 1  //Число пробелов для классического распределения
         while (result.length != maxL) {
-            result.insert(l, " ") //Вставляет пробел в resLine, начиная с индекса length
+            result.insert(l, " ") //Вставляет пробел в resLine, начиная с индекса l
             spaceCount++
             l += words[spaceCount % n].length + (spaceCount / n) + 2
             if (spaceCount % n == 0) {
@@ -211,7 +207,6 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     }
     writer.close()
 }
-
 
 /**
  * Средняя (14 баллов)
@@ -347,8 +342,45 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+fun tagCheck(line: StringBuilder, splitter: String, openTag: String, closeTag: String): StringBuilder {
+    var tag = true
+    val string = StringBuilder()
+    val list = line.split(splitter)
+    val size = list.size - 1
+    string.append(list[0])
+    for (i in 1..size) {
+        tag = if (tag) {
+            string.append(openTag)
+            false
+        } else {
+            string.append(closeTag)
+            true
+        }
+        string.append(list[i])
+    }
+    return string
+}
+
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val input = File(inputName).readLines()
+    writer.write("<html>\n<body>\n<p>\n")
+    val stringBuilder = StringBuilder()
+    var line = String()
+    for ((idx, l) in input.withIndex()) {
+        if (l.isEmpty() && line.isNotEmpty() && (idx != 0) && (idx != input.size - 1)) stringBuilder.append(
+            "\n</p>\n<p>\n"
+        )
+        else stringBuilder.append(l)
+        line = l
+        stringBuilder.append("\n")
+    }
+    var result = tagCheck(stringBuilder, "~~", "<s>", "</s>")
+    result = tagCheck(result, "**", "<b>", "</b>")
+    result = tagCheck(result, "*", "<i>", "</i>")
+    writer.write(result.toString())
+    writer.write("\n</p>\n</body>\n</html>")
+    writer.close()
 }
 
 /**
