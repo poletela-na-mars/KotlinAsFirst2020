@@ -171,9 +171,10 @@ fun centerFile(inputName: String, outputName: String) {
 fun alignFileByWidth(inputName: String, outputName: String) {
     var maxL = 0
     val reader = File(inputName).bufferedReader()
+    var words: List<String>
     reader.forEachLine {
         var x = 0
-        val words = Regex("\\s+").split(it.trim())
+        words = Regex("\\s+").split(it.trim())
         for (element in words) {
             x += element.length
         }
@@ -184,7 +185,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
         var result = StringBuilder(line.trim())
-        val words = Regex("\\s+").split(result.toString())
+        words = Regex("\\s+").split(result)
         if (words.size == 1) {
             writer.write(words[0])
             writer.newLine()
@@ -195,7 +196,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         var l = words[0].length
         val n = words.size - 1  //Число пробелов для классического распределения
         while (result.length != maxL) {
-            result.insert(l, " ") //Вставляет пробел в resLine, начиная с индекса l
+            result.insert(l, " ") //Вставляет пробел в result, начиная с индекса l
             spaceCount++
             l += words[spaceCount % n].length + (spaceCount / n) + 2
             if (spaceCount % n == 0) {
@@ -366,13 +367,11 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val input = File(inputName).readLines()
     writer.write("<html>\n<body>\n<p>\n")
     val stringBuilder = StringBuilder()
-    var line = String()
     for ((idx, l) in input.withIndex()) {
-        if (l.isEmpty() && line.isNotEmpty() && (idx != 0) && (idx != input.size - 1)) stringBuilder.append(
+        if (l.isEmpty() && input[idx - 1].isNotEmpty() && (idx != 0) && (idx != input.size - 1)) stringBuilder.append(
             "\n</p>\n<p>\n"
         )
         else stringBuilder.append(l)
-        line = l
         stringBuilder.append("\n")
     }
     var result = tagCheck(stringBuilder, "~~", "<s>", "</s>")
