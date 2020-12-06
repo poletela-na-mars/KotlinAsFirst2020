@@ -345,18 +345,18 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun tagCheck(line: MutableList<String>, splitter: String, openTag: String, closeTag: String): MutableList<String> {
-    var tag = true
+    var tag = 1
     val inputWithTag = mutableListOf<String>()
-    for ((i, l) in line.withIndex()) {
-        val listL = l.split(splitter)
+    for (ln in line.indices) {
+        val listL = line[ln].split(splitter)
         inputWithTag.add(listL[0])
         for (idx in 1 until listL.size) {
-            tag = if (tag) {
+            tag = if (tag == 1) {
                 inputWithTag.add(openTag)
-                false
+                0
             } else {
                 inputWithTag.add(closeTag)
-                true
+                1
             }
             inputWithTag.add(listL[idx])
         }
