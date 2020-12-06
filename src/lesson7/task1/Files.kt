@@ -172,9 +172,10 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     var maxL = 0
     val reader = File(inputName).bufferedReader()
     var words: List<String>
+    val regex = Regex("\\s+")
     reader.forEachLine {
         var x = 0
-        words = Regex("\\s+").split(it.trim())
+        words = regex.split(it.trim())
         for (element in words) {
             x += element.length
         }
@@ -185,7 +186,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
         var result = StringBuilder(line.trim())
-        words = Regex("\\s+").split(result)
+        words = regex.split(result)
         if (words.size == 1) {
             writer.write(words[0])
             writer.newLine()
@@ -343,45 +344,43 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
-fun tagCheck(line: StringBuilder, splitter: String, openTag: String, closeTag: String): StringBuilder {
+fun tagCheck(line: MutableList<String>, splitter: String, openTag: String, closeTag: String): MutableList<String> {
     var tag = true
-    val string = StringBuilder()
-    val list = line.split(splitter)
-    val size = list.size - 1
-    string.append(list[0])
-    for (i in 1..size) {
-        tag = if (tag) {
-            string.append(openTag)
-            false
-        } else {
-            string.append(closeTag)
-            true
+    val inputWithTag = mutableListOf<String>()
+    for ((i, l) in line.withIndex()) {
+        val listL = l.split(splitter)
+        inputWithTag.add(listL[0])
+        for (idx in 1 until listL.size) {
+            tag = if (tag) {
+                inputWithTag.add(openTag)
+                false
+            } else {
+                inputWithTag.add(closeTag)
+                true
+            }
+            inputWithTag.add(listL[idx])
         }
-        string.append(list[i])
     }
-    return string
+    return inputWithTag
 }
 
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
     val input = File(inputName).readLines()
-    writer.write("<html>\n<body>\n<p>\n")
-    val stringBuilder = StringBuilder()
-    for ((idx, l) in input.withIndex()) {
-        if (l.isEmpty() && input[idx - 1].isNotEmpty() && (idx != 0) && (idx != input.size - 1)) stringBuilder.append(
-            "\n</p>\n<p>\n"
-        )
-        else stringBuilder.append(l)
-        stringBuilder.append("\n")
+    val writer = File(outputName).bufferedWriter()
+    val inputL = input.toMutableList()
+    for (idx in input.indices) {
+        if (idx != 0 && idx != input.size - 1 && input[idx].trim().isEmpty() && input[idx - 1].trim().isNotEmpty()) {
+            inputL.removeAt(idx)
+            inputL.add(idx, ("</p><p>"))
+        }
     }
-    var result = tagCheck(stringBuilder, "~~", "<s>", "</s>")
+    var result = tagCheck(inputL, "~~", "<s>", "</s>")
     result = tagCheck(result, "**", "<b>", "</b>")
     result = tagCheck(result, "*", "<i>", "</i>")
-    writer.write(result.toString())
-    writer.write("\n</p>\n</body>\n</html>")
-    writer.close()
+    writer.use {
+        it.write("<html><body><p>${result.joinToString("")}</p></body></html>")
+    }
 }
-
 /**
  * Сложная (23 балла)
  *
