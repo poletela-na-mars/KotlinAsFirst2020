@@ -169,38 +169,32 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    var maxL = 0
-    lateinit var words: List<String>
     val reader = File(inputName).bufferedReader()
+    val text = reader.readLines().map { it.trim() }
+    val words = Array(text.size) { listOf<String>() }
     val regex = Regex("\\s+")
-    reader.forEachLine {
-        var x = 0
-        words = regex.split(it.trim())
-        for (element in words) {
-            x += element.length
-        }
-        x += words.size - 1
-        if (x > maxL) maxL = x
-    }
-    reader.close()
     val writer = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
-        var result = StringBuilder(line.trim())
-        if (words.size == 1) {
-            writer.write(words[0])
+    text.withIndex().forEach { words[it.index] = regex.split(it.value) }
+    var maxL = 0
+    for (i in text.indices) {
+        if (text[i].length > maxL) maxL = text[i].length
+    }
+    for (i in text.indices) {
+        if (words[i].size == 1) {
+            writer.write(words[i][0])
             writer.newLine()
             continue
         }
-        result = StringBuilder(words.joinToString(separator = " "))
+        val result = StringBuilder(words[i].joinToString(separator = " "))
         var spaceCount = 0   //Число добавленных пробелов
-        var l = words[0].length
-        val n = words.size - 1  //Число пробелов для классического распределения
+        var l = words[i][0].length
+        val n = words[i].size - 1  //Число пробелов для классического распределения
         while (result.length != maxL) {
             result.insert(l, " ") //Вставляет пробел в result, начиная с индекса l
             spaceCount++
-            l += words[spaceCount % n].length + (spaceCount / n) + 2
+            l += words[i][spaceCount % n].length + (spaceCount / n) + 2
             if (spaceCount % n == 0) {
-                l = words[spaceCount % n].length
+                l = words[i][spaceCount % n].length
             }
         }
         writer.write(result.toString())
@@ -380,6 +374,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         it.write("<html><body><p>${result.joinToString("")}</p></body></html>")
     }
 }
+
 /**
  * Сложная (23 балла)
  *
