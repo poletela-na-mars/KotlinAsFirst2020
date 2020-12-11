@@ -170,23 +170,28 @@ fun centerFile(inputName: String, outputName: String) {
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
     var maxL = 0
-    var words: List<String>
+    lateinit var words: List<String>
+    val reader = File(inputName).bufferedReader()
     val regex = Regex("\\s+")
-    val writer = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
+    reader.forEachLine {
         var x = 0
-        words = regex.split(line.trim())
+        words = regex.split(it.trim())
         for (element in words) {
             x += element.length
         }
         x += words.size - 1
         if (x > maxL) maxL = x
+    }
+    reader.close()
+    val writer = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        var result = StringBuilder(line.trim())
         if (words.size == 1) {
             writer.write(words[0])
             writer.newLine()
             continue
         }
-        val result = StringBuilder(words.joinToString(separator = " "))
+        result = StringBuilder(words.joinToString(separator = " "))
         var spaceCount = 0   //Число добавленных пробелов
         var l = words[0].length
         val n = words.size - 1  //Число пробелов для классического распределения
